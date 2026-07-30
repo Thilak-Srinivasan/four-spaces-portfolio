@@ -1,9 +1,5 @@
 import { useEffect, useRef } from 'react'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { prefersReducedMotion } from '../canvas/useCanvasEffect'
-
-gsap.registerPlugin(ScrollTrigger)
 
 interface CountUpProps {
   value: number
@@ -12,30 +8,69 @@ interface CountUpProps {
   locale?: string
 }
 
-/** Number that counts up when scrolled into view. */
+/**
+ * Number that counts up when it becomes visible. Driven by an
+ * IntersectionObserver (not scroll positions), so it fires reliably on
+ * mobile and regardless of layout shifts or the smooth-scroll library.
+ */
 export function CountUp({ value, decimals = 0, approx, locale = 'en-IN' }: CountUpProps) {
   const ref = useRef<HTMLSpanElement>(null)
 
   useEffect(() => {
     const el = ref.current!
-    const fmt = (v: number) => v.toLocaleString(locale, { minimumFractionDigits: decimals, maximumFractionDigits: decimals })
+    const fmt = (v: number) =>
+      v.toLocaleString(locale, { minimumFractionDigits: decimals, maximumFractionDigits: decimals })
+
     if (prefersReducedMotion()) {
       el.textContent = fmt(value)
       return
     }
-    const counter = { v: 0 }
-    const tween = gsap.to(counter, {
-      v: value,
-      duration: 1.8,
-      ease: 'power3.out',
-      scrollTrigger: { trigger: el, start: 'top 85%' },
-      onUpdate: () => {
-        el.textContent = fmt(counter.v)
+
+    el.textContent = fmt(0)
+    let raf = 0
+    let done = false
+
+    const animate = () => {
+      const t0 = performance.now()
+      const dur = 1800
+      const tick = (t: number) => {
+        const p = Math.min((t - t0) / dur, 1)
+        const eased = 1 - Math.pow(1 - p, 3) // easeOutCubic
+        el.textContent = fmt(value * eased)
+        if (p < 1) raf = requestAnimationFrame(tick)
+        else el.textContent = fmt(value)
+      }
+      raf = requestAnimationFrame(tick)
+    }
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !done) {
+          done = true
+          animate()
+          io.disconnect()
+        }
       },
-    })
+      { threshold: 0.25, rootMargin: '0px 0px -5% 0px' },
+    )
+    io.observe(el)
+
+    // safety net: if the observer never fires, settle on the final value
+    const fallback = setTimeout(() => {
+      if (!done) {
+        const r = el.getBoundingClientRect()
+        if (r.top < innerHeight && r.bottom > 0) {
+          done = true
+          animate()
+          io.disconnect()
+        }
+      }
+    }, 2500)
+
     return () => {
-      tween.scrollTrigger?.kill()
-      tween.kill()
+      io.disconnect()
+      cancelAnimationFrame(raf)
+      clearTimeout(fallback)
     }
   }, [value, decimals, locale])
 
