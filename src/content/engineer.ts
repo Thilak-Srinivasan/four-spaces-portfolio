@@ -18,12 +18,19 @@ export interface Experience {
 
 export const EXPERIENCE: Experience[] = [
   {
+    role: 'Visiting Student',
+    org: 'TU Braunschweig',
+    dates: 'Aug 2026 — Present',
+    detail:
+      'Bachelor thesis on ice accretion over a regional aircraft wing at the Institut für Strömungsmechanik — 2D RANS of a Dornier A-5 airfoil at Re ≈ 1.1×10⁶ and −10 °C, k-ω SST, resolved to y⁺ < 1. Four levels of grid refinement and a farfield pushed from 10c to 20c, because you earn the right to trust a Cp curve before you let any ice near the surface.',
+    highlight: true,
+  },
+  {
     role: 'Summer Research Fellow',
     org: 'IIT Madras × Intel',
-    dates: 'May 2026 — Present',
+    dates: 'May — Jul 2026',
     detail:
       'Non-conventional blower design for electronics cooling — CFD simulation of unconventional geometries, aeroacoustic analysis of noise signatures, and thermal performance mapping across 15–65 W loads. The kind of problem where every decibel and every degree is fought for.',
-    highlight: true,
   },
   {
     role: 'Robotics Simulation Intern',
