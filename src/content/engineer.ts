@@ -22,7 +22,7 @@ export const EXPERIENCE: Experience[] = [
     org: 'TU Braunschweig',
     dates: 'Aug 2026 — Present',
     detail:
-      'Bachelor thesis on ice accretion over a regional aircraft wing at the Institut für Strömungsmechanik — 2D RANS of a Dornier A-5 airfoil at Re ≈ 1.1×10⁶ and −10 °C, k-ω SST, resolved to y⁺ < 1. Four levels of grid refinement and a farfield pushed from 10c to 20c, because you earn the right to trust a Cp curve before you let any ice near the surface.',
+      'Bachelor\'s thesis on ice accretion over a regional aircraft wing at the Institut für Strömungsmechanik — 2D RANS of a Dornier A-5 airfoil at Re ≈ 1.1×10⁶ and −10 °C, k-ω SST, resolved to y⁺ < 1. Four levels of grid refinement and a farfield pushed from 10c to 20c, because you earn the right to trust a Cp curve before you let any ice near the surface.',
     highlight: true,
   },
   {
